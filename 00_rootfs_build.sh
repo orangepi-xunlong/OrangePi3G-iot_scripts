@@ -105,7 +105,7 @@ deboostrap_rootfs() {
         dist="$1"
         tgz="$(readlink -f "$2")"
 
-        ARCH="arm"
+        ARCH="armhf"
         EXCLUDE="--exclude=init,systemd-sysv"
         EXTR="--keep-debootstrap-dir"
         RELEASE=jessie
