@@ -89,6 +89,13 @@ compile_uboot()
 			echo -e "\e[1;35m Build LK\e[0m"
 			cd ${UBOOT}/lk
 			./sh.sh
+
+			PRELOADERBIN=$BUILD/obj/PRELOADER_OBJ/bin/preloader_$MTK_PROJECT.bin
+                	LKBIN=$BUILD/obj/BOOTLOADER_OBJ/build-$MTK_PROJECT/lk.bin
+                	LOGOBIN=$BUILD/obj/BOOTLOADER_OBJ/build-$MTK_PROJECT/logo.bin
+			cp ${PRELOADERBIN} ${UBOOT_BIN}
+			cp ${LKBIN} ${UBOOT_BIN}
+			cp ${LOGOBIN} ${UBOOT_BIN}
 			;;
 		*)
 	        	echo -e "\e[1;31m Pls select correct platform \e[0m"
@@ -199,6 +206,8 @@ compile_kernel()
 			make -C $LINUX ARCH=arm CROSS_COMPILE=$TOOLS O=$BUILD/obj/KERNEL_OBJ silentoldconfig
 			make -C $LINUX ARCH=arm CROSS_COMPILE=$TOOLS -j${CORES} O=$BUILD/obj/KERNEL_OBJ
 			make -C $LINUX ARCH=arm CROSS_COMPILE=$TOOLS -j${CORES} O=$BUILD/obj/KERNEL_OBJ modules
+
+			${EXTER}/mkbootimg --kernel ${BUILD}/obj/KERNEL_OBJ/kernel_${MTK_PROJECT}.bin --board 2016.07.04  --output ${BUILD}/kernel/boot.img
 
 			;;
 		*)

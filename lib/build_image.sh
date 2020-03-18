@@ -63,12 +63,13 @@ build_mtk_image()
 		cp $BOOTIMG $IMAGE
 		cp ${EXTER}/system/$MTK_PROJECT/*  $IMAGE
 
-		if [ ${BOARD} = "3g-iot-A" ]; then
-			mkfs.ubifs -r $DEST -o ${BUILD}/ubifs.img -m 4096 -e 253952 -c 1800 -v
-			echo "image=${BUILD}/ubifs.img" >> ${EXTER}/ubi_android.ini
-			ubinize -o $IMAGE/rootfs.img -m 4096 -p 262144 -O 4096 -v ${EXTER}/ubi_android.ini
-			rm -rf ${BUILD}/ubifs.img
-		elif [ ${BOARD} = "3g-iot-B" ]; then
+#		if [ ${BOARD} = "3g-iot-A" ]; then
+#			mkfs.ubifs -r $DEST -o ${BUILD}/ubifs.img -m 4096 -e 253952 -c 1800 -v
+#			echo "image=${BUILD}/ubifs.img" >> ${EXTER}/ubi_android.ini
+#			ubinize -o $IMAGE/ubi_rootfs.img -m 4096 -p 262144 -O 4096 -v ${EXTER}/ubi_android.ini
+#			rm -rf ${BUILD}/ubifs.img
+#		fi
+		#elif [ ${BOARD} = "3g-iot-B" ]; then
 			IMG_ROOTFS_SIZE=$(expr `du -s $DEST | awk 'END {print $1}'` + 400 \* 1024)
 			dd if=/dev/zero of=${IMAGE}/rootfs.img bs=1M count=$(expr $IMG_ROOTFS_SIZE  \/ 1024 )
         		mkfs.ext4 -O ^metadata_csum -F -b 4096 -E stride=2,stripe-width=1024 -L rootfs ${IMAGE}/rootfs.img
@@ -81,7 +82,7 @@ build_mtk_image()
 			#Add rootfs into Image
 			cp -rfa ${DEST}/* /media/tmp
 			umount /media/tmp
-		fi
+		#fi
 
 	fi
 	cd ${BUILD}/images

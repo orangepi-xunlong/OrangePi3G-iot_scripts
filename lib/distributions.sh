@@ -563,6 +563,8 @@ EOF
 		echo "ttyFIQ0" >> $DEST/etc/securetty
 		sed -i '/^TimeoutStartSec=/s/5min/15sec/' $DEST/lib/systemd/system/networking.service
 		setup_resize-helper
+	elif [ ${PLATFORM} = "OrangePi3G-iot" ]; then
+                echo "" > $DEST/etc/fstab
 	fi
 	# Install Kernel modules
 	make -C $LINUX ARCH=${ARCH} CROSS_COMPILE=$TOOLS O=$BUILD/obj/KERNEL_OBJ modules_install INSTALL_MOD_PATH="$DEST"
