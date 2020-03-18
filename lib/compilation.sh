@@ -9,7 +9,7 @@ compile_uboot()
 	if [ ! -d $UBOOT_BIN ]; then
 		mkdir -p $UBOOT_BIN
 	fi
-	[ ${PLATFORM} = "OrangePi3G-iot" ] && UBOOT=${ROOT}/bootloader
+
 	# Perpar souce code
 	if [ ! -d $UBOOT ]; then
 		whiptail --title "OrangePi Build System" \
