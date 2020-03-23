@@ -151,14 +151,14 @@ deboostrap_rootfs() {
 
 	apt-get -y install debootstrap qemu-user-static
 
-	qemu-debootstrap --arch=${ARCH} --keyring=$TEMP/$KR $dist rootfs ${SOURCES}
+	qemu-debootstrap --arch=${ROOTFS_ARCH} --keyring=$TEMP/$KR $dist rootfs ${SOURCES}
 	rm -f $KR
 
 	# keeping things clean as this is copied later again
 #	rm -f rootfs/usr/bin/qemu-arm-static
-       if [ $ARCH = "arm64" ]; then 
+       if [ $ROOTFS_ARCH = "arm64" ]; then 
                rm -f rootfs/usr/bin/qemu-aarch64-static
-       elif [ $ARCH = "armhf" ]; then
+       elif [ $ROOTFS_ARCH = "armhf" ]; then
                rm -f rootfs/usr/bin/qemu-arm-static
        fi
 
@@ -387,7 +387,7 @@ prepare_env()
 			;;
 
 		stretch)
-			ROOTFS="${DISTRO}-base-${ARCH}.tar.gz"
+			ROOTFS="${DISTRO}-base-${ROOTFS_ARCH}.tar.gz"
 			METHOD="debootstrap"
 			case $SOURCES in
 		                "CDN")
@@ -565,6 +565,7 @@ EOF
 		setup_resize-helper
 	elif [ ${PLATFORM} = "OrangePi3G-iot" ]; then
                 echo "" > $DEST/etc/fstab
+		setup_resize-helper
 	fi
 	# Install Kernel modules
 	make -C $LINUX ARCH=${ARCH} CROSS_COMPILE=$TOOLS O=$BUILD/obj/KERNEL_OBJ modules_install INSTALL_MOD_PATH="$DEST"
