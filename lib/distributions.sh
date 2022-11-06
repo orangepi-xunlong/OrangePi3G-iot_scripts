@@ -178,11 +178,18 @@ do_chroot() {
        fi
 
 	cmd="$@"
-	chroot "$DEST" mount -t proc proc /proc || true
-	chroot "$DEST" mount -t sysfs sys /sys || true
+
+	if [[ ! -f /proc/sys/fs/binfmt_misc/arm ]]; then
+		echo ':arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-arm-static:CF' > /proc/sys/fs/binfmt_misc/register
+	fi
+
+	chroot "$DEST" mount -t proc proc /proc
+	chroot "$DEST" mount -t sysfs sys /sys
 	chroot "$DEST" $cmd
 	chroot "$DEST" umount /sys
 	chroot "$DEST" umount /proc
+
+	echo -1 > /proc/sys/fs/binfmt_misc/arm
 
 	# Clean up
 	rm -f "$DEST/usr/bin/qemu-arm-static"
@@ -371,7 +378,7 @@ prepare_env()
 			case $SOURCES in
 				"CDN"|"OFCL")
 			       	        SOURCES="http://ports.ubuntu.com"
-					ROOTFS="http://cdimage.ubuntu.com/ubuntu-base/releases/${DISTRO}/release/ubuntu-base-${DISTRO_NUM}-base-${ROOTFS_ARCH}.tar.gz"
+					ROOTFS="https://cdimage.ubuntu.com/ubuntu-base/releases/${DISTRO}/release/ubuntu-base-${DISTRO_NUM}-base-${ROOTFS_ARCH}.tar.gz"
 				        ;;
 				"CN")
 				        #SOURCES="http://mirrors.aliyun.com/ubuntu-ports"
