@@ -140,7 +140,7 @@ deboostrap_rootfs() {
 	cd $TEMP && pwd
 
 	# this is updated very seldom, so is ok to hardcode
-	debian_archive_keyring_deb="${SOURCES}/pool/main/d/debian-archive-keyring/debian-archive-keyring_2019.1_all.deb"
+	debian_archive_keyring_deb="${SOURCES}/pool/main/d/debian-archive-keyring/debian-archive-keyring_2019.1+deb10u1_all.deb"
 	wget -O keyring.deb "$debian_archive_keyring_deb"
 	ar -x keyring.deb && rm -f control.tar.gz debian-binary && rm -f keyring.deb
 	DATA=$(ls data.tar.*) && compress=${DATA#data.tar.}
@@ -178,8 +178,9 @@ do_chroot() {
        fi
 
 	cmd="$@"
-	chroot "$DEST" mount -t proc proc /proc || true
-	chroot "$DEST" mount -t sysfs sys /sys || true
+
+	chroot "$DEST" mount -t proc proc /proc
+	chroot "$DEST" mount -t sysfs sys /sys
 	chroot "$DEST" $cmd
 	chroot "$DEST" umount /sys
 	chroot "$DEST" umount /proc
@@ -371,7 +372,7 @@ prepare_env()
 			case $SOURCES in
 				"CDN"|"OFCL")
 			       	        SOURCES="http://ports.ubuntu.com"
-					ROOTFS="http://cdimage.ubuntu.com/ubuntu-base/releases/${DISTRO}/release/ubuntu-base-${DISTRO_NUM}-base-${ROOTFS_ARCH}.tar.gz"
+					ROOTFS="https://cdimage.ubuntu.com/ubuntu-base/releases/${DISTRO}/release/ubuntu-base-${DISTRO_NUM}-base-${ROOTFS_ARCH}.tar.gz"
 				        ;;
 				"CN")
 				        #SOURCES="http://mirrors.aliyun.com/ubuntu-ports"
@@ -386,7 +387,7 @@ prepare_env()
 			esac
 			;;
 
-		stretch)
+		buster)
 			ROOTFS="${DISTRO}-base-${ROOTFS_ARCH}.tar.gz"
 			METHOD="debootstrap"
 			case $SOURCES in
@@ -394,7 +395,7 @@ prepare_env()
 		                        SOURCES="http://httpredir.debian.org/debian"
 		                        ;;
 		                "OFCL")
-		                        SOURCES="http://ftp2.debian.org/debian"
+		                        SOURCES="https://ftp.debian.org/debian"
 		                        ;;
 		                "CN")
 		                        SOURCES="http://ftp2.cn.debian.org/debian"
@@ -441,7 +442,7 @@ prepare_rootfs_server()
 		EXTRADEBS="software-properties-common libjpeg8-dev usbmount zram-config ubuntu-minimal net-tools"
 		ADDPPACMD=
 		DISPTOOLCMD=
-	elif [ "$DISTRO" = "sid" -o "$DISTRO" = "stretch" -o "$DISTRO" = "stable" ]; then
+	elif [ "$DISTRO" = "sid" -o "$DISTRO" = "buster" -o "$DISTRO" = "stable" ]; then
 		DEB=debian
 		DEBUSER=orangepi
 		EXTRADEBS="sudo net-tools g++ libjpeg-dev"
@@ -586,8 +587,8 @@ desktop_setup()
 		sed -i '/^[ ]*background=/s/1/0/' $DEST/etc/xdg/lxpanel/LXDE/panels/panel
 
 		echo -e "\n[keyfile]\nunmanaged-devices=*,except:type:ethernet,except:type:wifi,except:type:wwan" >> ${DEST}/etc/NetworkManager/NetworkManager.conf
-		[ $DISTRO = "stretch" ] && echo -e "\n[device]\nwifi.scan-rand-mac-address=no" >> $DEST/etc/NetworkManager/NetworkManager.conf
-		[ $DISTRO = "stretch" ] && cp -rfa $EXTER/packages/others/glmark2/* $DEST
+		[ $DISTRO = "buster" ] && echo -e "\n[device]\nwifi.scan-rand-mac-address=no" >> $DEST/etc/NetworkManager/NetworkManager.conf
+		[ $DISTRO = "buster" ] && cp -rfa $EXTER/packages/others/glmark2/* $DEST
 		[ $DISTRO = "xenial" ] && setup_front
 		cp -rfa $EXTER/packages $DEST
 		cp -rfa $EXTER/packages/overlay/* $DEST

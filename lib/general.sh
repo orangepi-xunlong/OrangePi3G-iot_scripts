@@ -187,7 +187,7 @@ select_distro()
 		--menu "$MENUSTR" 20 60 10 --cancel-button Finish --ok-button Select \
                 "0"   "[$SOURCES]Change repository server" \
                 "1"   "Ubuntu Xenial" \
-                "2"   "Debian Stretch" \
+                "2"   "Debian Buster" \
                 3>&1 1>&2 2>&3)
 
 		case "${OPTION}" in
@@ -196,11 +196,11 @@ select_distro()
 				;;
 			"1") 
 				DISTRO="xenial"
-				DISTRO_NUM="16.04.1"
+				DISTRO_NUM="16.04.6"
 	                     	OS="ubuntu"
 				;;
 		 	"2")     
-	                	DISTRO="stretch"
+	                	DISTRO="buster"
 	                	OS="debian"
 				;;
 			"3")
